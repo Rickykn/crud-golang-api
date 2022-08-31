@@ -11,8 +11,54 @@ import (
 )
 
 func GetProducts(w http.ResponseWriter, r *http.Request) {
+	name := r.URL.Query().Get("name")
+	page := r.URL.Query().Get("page")
+	size := r.URL.Query().Get("size")
+	sort := r.URL.Query().Get("sort")
 
-	result, err := models.GetProducts()
+	var sortBool bool
+
+	if sort == "" || sort == "ASC" {
+		sortBool = true
+	} else if sort == "DESC" {
+		sortBool = false
+	}
+
+	if page == "" {
+		page = "1"
+	}
+
+	if size == "" {
+		size = "10"
+	}
+
+	pageInt, err := strconv.Atoi(page)
+
+	if err != nil {
+		helpers.WriteResponse(
+			w,
+			http.StatusBadRequest,
+			"Bad Request",
+			nil,
+		)
+		return
+
+	}
+
+	sizeInt, err := strconv.Atoi(size)
+
+	if err != nil {
+		helpers.WriteResponse(
+			w,
+			http.StatusBadRequest,
+			"Bad Request",
+			nil,
+		)
+		return
+
+	}
+
+	result, err := models.GetProducts(pageInt, sizeInt, name, sortBool)
 
 	if err != nil {
 		helpers.WriteResponse(

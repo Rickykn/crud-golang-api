@@ -11,10 +11,22 @@ type Product struct {
 	Quantity    int    `json:"quantity" validate:"required"`
 }
 
-func GetProducts() ([]*Product, error) {
+func GetProducts(page, size int, search string, sort bool) ([]*Product, error) {
 	db := database.Get()
 
-	rows, err := db.Query("SELECT id,name,description,quantity FROM products_tab")
+	rows, err := db.Query(`
+		SELECT id,name,description,quantity FROM products_tab
+		WHERE name ILIKE $1
+		ORDER BY
+			CASE WHEN $2 = true then name END ASC,
+			CASE WHEN $2 = false then name END DESC
+		OFFSET $3
+		LIMIT $4
+		`,
+		"%"+search+"%",
+		sort,
+		(page-1)*size,
+		size)
 
 	if err != nil {
 		return nil, err
