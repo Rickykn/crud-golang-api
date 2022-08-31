@@ -3,21 +3,23 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
-)
+	_ "github.com/joho/godotenv"
 
-var (
-	HOST = "localhost"
-	PORT = "5432"
+	_ "github.com/lib/pq"
 )
 
 var db *sql.DB
 
 func Connect() {
-	godotenv.Load("../../.env")
+	errEnv := godotenv.Load()
+
+	if errEnv != nil {
+		log.Fatal("Error loading .env file")
+	}
 
 	HOST := os.Getenv("HOST")
 	PORT := os.Getenv("PORT")

@@ -10,17 +10,21 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func home(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Selamat datang sample crud api")
+}
+
 func main() {
 	fmt.Println("CRUD PRODUCT API")
 	database.Connect()
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println(w, "API WARUNG 1.0")
-	}).Methods(http.MethodGet)
+	r.HandleFunc("/", home).Methods(http.MethodGet)
 
 	r.Use(middleware.LogMiddleWare)
+
+	r.HandleFunc("/products", handlers.GetProducts).Methods(http.MethodGet)
 
 	r.NotFoundHandler = http.HandlerFunc(handlers.NotFound)
 	r.MethodNotAllowedHandler = http.HandlerFunc(handlers.MethodNotAllowed)
