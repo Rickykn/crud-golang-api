@@ -25,6 +25,7 @@ func main() {
 	r.Use(middleware.LogMiddleWare)
 
 	r.HandleFunc("/products", handlers.GetProducts).Methods(http.MethodGet)
+	r.HandleFunc("/products/{id}", handlers.GetProductById).Methods(http.MethodGet)
 
 	r.NotFoundHandler = http.HandlerFunc(handlers.NotFound)
 	r.MethodNotAllowedHandler = http.HandlerFunc(handlers.MethodNotAllowed)

@@ -35,3 +35,23 @@ func GetProducts() ([]*Product, error) {
 
 	return products, nil
 }
+
+func GetProductById(id int) (*Product, error) {
+	db := database.Get()
+
+	product := &Product{}
+
+	err := db.QueryRow("SELECT id,name,description,quantity FROM products_tab WHERE id = $1", id).Scan(
+		&product.ID,
+		&product.Name,
+		&product.Description,
+		&product.Quantity,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return product, nil
+
+}
